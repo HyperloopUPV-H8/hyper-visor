@@ -1,0 +1,28 @@
+{
+  "name": "hyper-visor-backend",
+  "version": "1.0.0",
+  "description": "Hyper Visor backend software for Hyperloop UPV",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "hyperloop",
+    "upv",
+    "h10"
+  ],
+  "author": "Andres de la Torre Mora",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.21",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
