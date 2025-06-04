@@ -1,4 +1,4 @@
-import { Device, PacketWithHeader, PcapSession } from "pcap";
+import { PacketWithHeader, PcapSession } from "pcap";
 
 /**
  * Interface that defines the structure of a Sniffer class
