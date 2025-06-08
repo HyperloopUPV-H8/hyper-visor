@@ -1,5 +1,4 @@
 import express from "express";
-import pcap from "pcap";
 
 const app = express();
 

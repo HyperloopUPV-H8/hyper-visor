@@ -10,4 +10,5 @@ services:
       - /app/node_modules 
     ports:
       - "3000:3000"
+      - "8001:8002/udp"
     command: npm run dev

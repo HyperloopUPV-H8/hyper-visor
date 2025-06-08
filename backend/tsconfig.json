@@ -28,9 +28,6 @@
     /* Modules */
     "module": "CommonJS",                                /* Specify what module code is generated. */
     "baseUrl": "./src",
-    "paths": {
-      "#types/*": ["types/*"]
-    },
     // "rootDir": "./",                                  /* Specify the root folder within your source files. */
     // "moduleResolution": "node10",                     /* Specify how TypeScript looks up a file from a given module specifier. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
