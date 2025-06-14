@@ -1,7 +1,10 @@
 import { Decoder, Sniffer } from "./modules/sniffer";
 import { ADJConstructor } from "./modules/adj";
 
-// const sniffer = new Sniffer("eth0", "udp and dst port 8002");
+const PCAP_INTERFACE = "eth0";
+const PCAP_FILTER = "udp and dst port 8002";
+
+// const sniffer = new Sniffer(PCAP_INTERFACE, PCAP_FILTER);
 
 // const decoder = new Decoder();
 
@@ -12,6 +15,14 @@ import { ADJConstructor } from "./modules/adj";
 
 // sniffer.startSession();
 
-const adjConstructor = new ADJConstructor('./adj');
+(async () => {
+    const adjConstructor = new ADJConstructor('./adj');
 
-adjConstructor.execute();
+    const adjResult = await adjConstructor.execute();
+    
+    if (adjResult.isErr()) {
+        console.error(adjResult.error);
+    } else {
+        console.log(adjResult.value);
+    }
+})()

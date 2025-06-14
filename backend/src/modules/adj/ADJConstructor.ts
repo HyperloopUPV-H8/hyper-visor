@@ -4,6 +4,7 @@ import { err, ok, Result } from 'neverthrow';
 import * as path from 'path';
 import { ADJLectureError } from './errors/ADJLecture';
 import { Board, BoardName, Measurement, Packet } from 'types/adj';
+import { ADJError } from './errors/base';
 
 const FILES_REGEX = {
     PACKETS: /packets.*\.json$/,
@@ -19,30 +20,28 @@ export class ADJConstructor {
         this._adj = new ADJ();
     }
 
-    public async execute(): Promise<ADJ> {
+    public async execute(): Promise<Result<ADJ, ADJError>> {
         const boardsDefinitionFilePath = path.join(this._adjPath, 'boards.json');
 
         const registerBoardsResult = await this.registerBoards(boardsDefinitionFilePath);
 
         if (registerBoardsResult.isErr()) {
-            throw registerBoardsResult.error;
+            return err(registerBoardsResult.error);
         }
 
         const registerPacketsResult = await this.registerPackets();
 
         if (registerPacketsResult.isErr()) {
-            throw registerPacketsResult.error;
+            return err(registerPacketsResult.error);
         }
 
         const registerMeasurementsResult = await this.registerMeasurements();
 
         if (registerMeasurementsResult.isErr()) {
-            throw registerMeasurementsResult.error;
+            return err(registerMeasurementsResult.error);
         }
 
-        console.log(this._adj);
-
-        return this._adj;
+        return ok(this._adj);
     }
 
     private async registerBoards(boardsDefinitionFilePath: string): Promise<Result<void, ADJLectureError>> {
