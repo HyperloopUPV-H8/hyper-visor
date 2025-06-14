@@ -17,7 +17,9 @@
   "author": "Andres de la Torre Mora",
   "license": "ISC",
   "dependencies": {
+    "eslint-plugin-neverthrow": "^1.1.4",
     "express": "^5.1.0",
+    "neverthrow": "^8.2.0",
     "pcap": "^3.1.0",
     "pino": "^9.7.0"
   },
