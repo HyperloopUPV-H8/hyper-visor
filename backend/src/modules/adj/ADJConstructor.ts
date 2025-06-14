@@ -40,6 +40,8 @@ export class ADJConstructor {
             throw registerMeasurementsResult.error;
         }
 
+        console.log(this._adj);
+
         return this._adj;
     }
 
@@ -65,7 +67,7 @@ export class ADJConstructor {
     }
     
     private async registerPackets(): Promise<Result<void, ADJLectureError>> {
-        for (const board of this._adj.boards) {
+        for (const board of this._adj.boards.values()) {
             const boardDir = await fs.readdir(path.join(this._adjPath, 'boards', board.name));
             const packetsFiles = boardDir.filter((file: string) => FILES_REGEX.PACKETS.test(file));
             const packetsFilesPaths = packetsFiles.map((file: string) => path.join(this._adjPath, 'boards', board.name, file));
@@ -89,7 +91,7 @@ export class ADJConstructor {
     }
 
     private async registerMeasurements(): Promise<Result<void, ADJLectureError>> {
-        for (const board of this._adj.boards) {
+        for (const board of this._adj.boards.values()) {
             const boardDir = await fs.readdir(path.join(this._adjPath, 'boards', board.name))
             const measurementsFiles = boardDir.filter((file: string) => FILES_REGEX.MEASUREMENTS.test(file))
             const measurementsFilesPaths = measurementsFiles.map((file: string) => path.join(this._adjPath, 'boards', board.name, file))

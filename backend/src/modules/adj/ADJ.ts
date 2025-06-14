@@ -1,37 +1,37 @@
-import { Board, Measurement, Packet } from "types/adj";
+import { Board, BoardId, Measurement, MeasurementId, Packet, PacketId } from "types/adj";
 
 export class ADJ {
-    private _boards: Board[];
-    private _packets: Packet[];
-    private _measurements: Measurement[];
+    private _boards: Map<BoardId, Board>;
+    private _packets: Map<PacketId, Packet>;
+    private _measurements: Map<MeasurementId, Measurement>;
 
     constructor() {
-        this._boards = [];
-        this._packets = [];
-        this._measurements = [];
+        this._boards = new Map();
+        this._packets = new Map();
+        this._measurements = new Map();
     }
 
     addBoard(board: Board): void {
-        this._boards.push(board);
+        this._boards.set(board.id, board);
     }
 
     addPacket(packet: Packet): void {
-        this._packets.push(packet);
+        this._packets.set(packet.id, packet);
     }
 
     addMeasurement(measurement: Measurement): void {
-        this._measurements.push(measurement);
+        this._measurements.set(measurement.id, measurement);
     }
 
-    get boards(): Board[] {
+    get boards(): Map<BoardId, Board> {
         return this._boards;
     }
 
-    get packets(): Packet[] {
+    get packets(): Map<PacketId, Packet> {
         return this._packets;
     }
 
-    get measurements(): Measurement[] {
+    get measurements(): Map<MeasurementId, Measurement> {
         return this._measurements;
     }
 }
