@@ -1,2 +1,2 @@
 export * from "./Sniffer";
-export * from "./Decoder";
+export * from "./NetworkDecoder";

@@ -20,7 +20,7 @@ export type MeasurementType =
     | 'float32'
     | 'float64'
     | 'string'
-    | 'boolean'
+    | 'bool'
     | 'enum';
 export type MeasurementPodUnits = string;
 export type MeasurementDisplayUnits = string;

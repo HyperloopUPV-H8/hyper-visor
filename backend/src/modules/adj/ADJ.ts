@@ -22,6 +22,28 @@ export class ADJ {
     addMeasurement(measurement: Measurement): void {
         this._measurements.set(measurement.id, measurement);
     }
+    
+    getPacketMeasurements(packetId: PacketId): Measurement[] {
+        const packet = this._packets.get(packetId);
+
+        if (!packet) {
+            return [];
+        }
+        
+        const measurementsIds = packet.variables;
+
+        const measurements : Measurement[] = [];
+
+        for (const measurementId of measurementsIds) {
+            const measurement = this._measurements.get(measurementId);
+            if (!measurement) {
+                continue;
+            }
+            measurements.push(measurement);
+        }
+        
+        return measurements;
+    }
 
     get boards(): Map<BoardId, Board> {
         return this._boards;
