@@ -5,6 +5,11 @@ import * as path from 'path';
 import { ADJLectureError } from './errors/ADJLecture';
 import { Board, BoardName, Measurement, Packet } from 'types/adj';
 
+const FILES_REGEX = {
+    PACKETS: /packets.*\.json$/,
+    MEASUREMENTS: /measurements.*\.json$/,
+}
+
 export class ADJConstructor {
     private _adj!: ADJ;
     private _adjPath: string;
@@ -62,7 +67,7 @@ export class ADJConstructor {
     private async registerPackets(): Promise<Result<void, ADJLectureError>> {
         for (const board of this._adj.boards) {
             const boardDir = await fs.readdir(path.join(this._adjPath, 'boards', board.name));
-            const packetsFiles = boardDir.filter((file: string) => /packets.*\.json$/.test(file));
+            const packetsFiles = boardDir.filter((file: string) => FILES_REGEX.PACKETS.test(file));
             const packetsFilesPaths = packetsFiles.map((file: string) => path.join(this._adjPath, 'boards', board.name, file));
 
             for (const packetsFilePath of packetsFilesPaths) {
@@ -86,7 +91,7 @@ export class ADJConstructor {
     private async registerMeasurements(): Promise<Result<void, ADJLectureError>> {
         for (const board of this._adj.boards) {
             const boardDir = await fs.readdir(path.join(this._adjPath, 'boards', board.name))
-            const measurementsFiles = boardDir.filter((file: string) => /measurements.*\.json$/.test(file))
+            const measurementsFiles = boardDir.filter((file: string) => FILES_REGEX.MEASUREMENTS.test(file))
             const measurementsFilesPaths = measurementsFiles.map((file: string) => path.join(this._adjPath, 'boards', board.name, file))
 
             for (const measurementsFilePath of measurementsFilesPaths) {
