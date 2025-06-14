@@ -16,60 +16,70 @@ export class PacketDecoder {
         
         const packetMeasurements = this._adj.getPacketMeasurements(packetId);
         
-        // Decodificar cada medición según su tipo
         for (const measurement of packetMeasurements) {
-            let value: any;
-            
-            switch (measurement.type) {
-                case 'enum':
-                    value = packet.readUInt8(offset);
-                    offset += 1;
-                    break;
-                case 'bool':
-                    value = packet.readUInt8(offset) === 1;
-                    offset += 1;
-                    break;
-                case 'uint8':
-                    value = packet.readUInt8(offset);
-                    offset += 1;
-                    break;
-                case 'uint16':
-                    value = packet.readUInt16LE(offset);
-                    offset += 2;
-                    break;
-                case 'uint32':
-                    value = packet.readUInt32LE(offset);
-                    offset += 4;
-                    break;
-                case 'uint64':
-                    value = packet.readBigUInt64LE(offset);
-                    offset += 8;
-                    break;
-                case 'int8':
-                    value = packet.readInt8(offset);
-                    offset += 1;
-                    break;
-                case 'int16':
-                    value = packet.readInt16LE(offset);
-                    offset += 2;
-                    break;
-                case 'int32':
-                    value = packet.readInt32LE(offset);
-                    offset += 4;
-                    break;
-                case 'int64':
-                    value = packet.readBigInt64LE(offset);
-                    offset += 8;
-                    break;
-                case 'float32':
-                    value = packet.readFloatLE(offset);
-                    offset += 4;
-                    break;
-                case 'float64':
-                    value = packet.readDoubleLE(offset);
-                    offset += 8;
-                    break;
-            }
+            const { value, newOffset } = this.decodeMeasurementValue(packet, offset, measurement.type);
+            offset = newOffset;
+
+            // TODO - Save value 
+            console.log(value);
         }
+    }
+
+    private decodeMeasurementValue(packet: Buffer, offset: number, type: string): { value: any; newOffset: number } {
+        let value: any;
+        let newOffset = offset;
+
+        switch (type) {
+            case 'enum':
+                value = packet.readUInt8(offset);
+                newOffset += 1;
+                break;
+            case 'bool':
+                value = packet.readUInt8(offset) === 1;
+                newOffset += 1;
+                break;
+            case 'uint8':
+                value = packet.readUInt8(offset);
+                newOffset += 1;
+                break;
+            case 'uint16':
+                value = packet.readUInt16LE(offset);
+                newOffset += 2;
+                break;
+            case 'uint32':
+                value = packet.readUInt32LE(offset);
+                newOffset += 4;
+                break;
+            case 'uint64':
+                value = packet.readBigUInt64LE(offset);
+                newOffset += 8;
+                break;
+            case 'int8':
+                value = packet.readInt8(offset);
+                newOffset += 1;
+                break;
+            case 'int16':
+                value = packet.readInt16LE(offset);
+                newOffset += 2;
+                break;
+            case 'int32':
+                value = packet.readInt32LE(offset);
+                newOffset += 4;
+                break;
+            case 'int64':
+                value = packet.readBigInt64LE(offset);
+                newOffset += 8;
+                break;
+            case 'float32':
+                value = packet.readFloatLE(offset);
+                newOffset += 4;
+                break;
+            case 'float64':
+                value = packet.readDoubleLE(offset);
+                newOffset += 8;
+                break;
+        }
+
+        return { value, newOffset };
     }
 }
