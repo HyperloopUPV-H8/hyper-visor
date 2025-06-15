@@ -1,8 +1,7 @@
 import { Subject, Subscription } from "rxjs";
 import { DecodedPacket } from "types/packet/decoded-packet.interface";
-import { IPacketsEmitter } from "types/packets-emitter/packets-emitter.interface";
+import { IPacketsEmitter, SubscriberId } from "types/packets-emitter/packets-emitter.interface";
 
-type SubscriberId = string;
 
 /**
  * Class that emits packets to the subscribers

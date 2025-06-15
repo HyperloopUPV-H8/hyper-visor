@@ -1,5 +1,6 @@
 import { Subject, Subscription } from "rxjs";
-import { DecodedPacket } from "types/packet/decoded-packet.interface";
+
+export type SubscriberId = string;
 
 /**
  * Interface for the packets emitter
@@ -15,7 +16,7 @@ export interface IPacketsEmitter<T> {
     /**
      * The subscribers
      */
-    _subscribers: Map<string, Subscription>;
+    _subscribers: Map<SubscriberId, Subscription>;
 
     /**
      * Write a packet to the buffer
@@ -27,16 +28,16 @@ export interface IPacketsEmitter<T> {
      * Subscribe to the buffer to receive packets
      * @param callback - The callback to be called when a packet is written to the buffer
      */
-    subscribe(callback: (packet: T) => void): void;
+    subscribe(callback: (packet: T) => void): SubscriberId;
 
     /**
      * Unsubscribe from the buffer
      * @param callback - The callback to be removed from the buffer
      */
-    unsubscribe(): void;
+    unsubscribe(subscriberId?: SubscriberId): void;
 
     /**
      * Get the active subscribers
      */
-    getActiveSubscribers(): string[];
+    getActiveSubscribers(): SubscriberId[];
 }
