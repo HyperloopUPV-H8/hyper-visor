@@ -5,7 +5,7 @@ const IP_VERSION_4 = 4;
 const IP_PROTOCOL_TCP = 16;
 const IP_PROTOCOL_UDP = 17;
 
-export class Decoder implements IDecoder {
+export class NetworkDecoder implements IDecoder {
     private _rawPacket!: PacketWithHeader;
     private _eth: any;
     private _ipv4: any;

@@ -1,5 +1,6 @@
 import { ISniffer } from '../../types/sniffer';
 import { PacketWithHeader, PcapSession, createSession } from 'pcap';
+import { logger } from '../logger';
 
 export class Sniffer implements ISniffer {
     private _session!: PcapSession;
@@ -22,13 +23,13 @@ export class Sniffer implements ISniffer {
         }
         });
 
-        console.log(`[Sniffer] Session started on interface: ${this._interface} with filter: "${this._filter}"`);
+        logger.info(`[Sniffer] Session started on interface: ${this._interface} with filter: "${this._filter}"`);
     }
 
     stopSession(): void {
         if (this._session) {
             this._session.close();
-            console.log(`[Sniffer] Session stopped on interface: ${this._interface}`);
+            logger.info(`[Sniffer] Session stopped on interface: ${this._interface}`);
         }
     }
 

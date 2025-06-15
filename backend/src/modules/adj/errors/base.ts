@@ -1,4 +1,4 @@
-import { ADJErrorType } from "./ADJErrorType.enum";
+import { ADJErrorType } from "./adj-error-type.enum";
 
 export class ADJError extends Error {
     public readonly name: string;

@@ -1,3 +1,3 @@
-export * from './ADJ';
-export * from './adjConstructor';
-export * from './adjFetcher';
+export * from './adj';
+export * from './adj-constructor';
+export * from './adj-fetcher';

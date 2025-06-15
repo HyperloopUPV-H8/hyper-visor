@@ -15,13 +15,12 @@ export class PacketDecoder {
         offset += 2;
         
         const packetMeasurements = this._adj.getPacketMeasurements(packetId);
-        
+
         for (const measurement of packetMeasurements) {
             const { value, newOffset } = this.decodeMeasurementValue(packet, offset, measurement.type);
             offset = newOffset;
 
             // TODO - Save value 
-            console.log(value);
         }
     }
 

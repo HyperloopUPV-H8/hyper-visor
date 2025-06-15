@@ -1,4 +1,4 @@
-import { ADJErrorType } from "./ADJErrorType.enum";
+import { ADJErrorType } from "./adj-error-type.enum";
 import { ADJError } from "./base";
 
 export class ADJLectureError extends ADJError {

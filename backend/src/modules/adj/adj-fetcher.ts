@@ -6,6 +6,14 @@ const owner = 'HyperloopUPV-H8';
 const repo = 'adj';
 const outputDir = './adj';
 
+/**
+ * TODO: Refactor this file
+ * 
+ * - Use an env variable for the repo url
+ * - Handle errors with the either pattern
+ * - Logs with pino logger
+ */
+
 function githubApiRequest(apiPath: string): Promise<any> {
     const options = {
         hostname: 'api.github.com',
