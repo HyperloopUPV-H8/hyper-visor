@@ -4,7 +4,13 @@ import { IPacketsEmitter } from "types/packets-emitter/packets-emitter.interface
 
 type SubscriberId = string;
 
-export class PacketsEmitter implements IPacketsEmitter {
+/**
+ * Class that emits packets to the subscribers
+ * @description The packets emitter is a class that emits packets to the subscribers
+ * @template T - The type of the packet
+ * @implements {IPacketsEmitter<T>} - The interface for the packets emitter
+ */
+export class PacketsEmitter implements IPacketsEmitter<DecodedPacket> {
     _subject: Subject<DecodedPacket>;
     _subscribers: Map<SubscriberId, Subscription>;
 
@@ -13,10 +19,19 @@ export class PacketsEmitter implements IPacketsEmitter {
         this._subscribers = new Map();
     }
 
+    /**
+     * Emit a packet to the subscribers
+     * @param packet - The packet to be emitted
+     */
     emit(packet: DecodedPacket): void {
         this._subject.next(packet);
     }
 
+    /**
+     * Subscribe to the packets emitter
+     * @param callback - The callback to be called when a packet is emitted
+     * @returns The subscriber id
+     */
     subscribe(callback: (packet: DecodedPacket) => void): SubscriberId {
         const subscriberId = crypto.randomUUID();
         const subscription = this._subject.subscribe(callback);
@@ -24,6 +39,10 @@ export class PacketsEmitter implements IPacketsEmitter {
         return subscriberId;
     }
 
+    /**
+     * Unsubscribe from the packets emitter
+     * @param subscriberId - The subscriber id
+     */
     unsubscribe(subscriberId?: SubscriberId): void {
         if (subscriberId) {
             const subscription = this._subscribers.get(subscriberId);
@@ -38,6 +57,10 @@ export class PacketsEmitter implements IPacketsEmitter {
         }
     }
 
+    /**
+     * Get the active subscribers
+     * @returns The active subscribers
+     */
     getActiveSubscribers(): SubscriberId[] {
         return Array.from(this._subscribers.keys());
     }
