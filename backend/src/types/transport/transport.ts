@@ -37,12 +37,14 @@ export class Transport {
      * Start the websocket server
      */
     start(): void {
+        logger.info(`Starting WebSocket server on: ${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`);
+
         this._packetsEmitterSubscriptionId = this._packetsEmitter.subscribe((packet) => {
             console.log(packet);
         });
 
         this._websocket.on(WEBSOCKET_CONNECTION_EVENT, (ws) => {
-            logger.info('WebSocket connected');
+            logger.info(`WebSocket connected: ${ws.url}`);
             // TODO: Send the ADJ structure serialized to the client
         });
 
@@ -60,6 +62,8 @@ export class Transport {
      * Stop the websocket server
      */
     stop(): void {
+        logger.info(`Stopping WebSocket server on: ${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`);
+
         this._packetsEmitter.unsubscribe(this._packetsEmitterSubscriptionId);
         this._websocket.close();
     }
