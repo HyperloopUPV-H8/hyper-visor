@@ -2,13 +2,13 @@ import { logger } from "modules/logger";
 import { DecodedPacket } from "types/packet/decoded-packet.interface";
 import { IPacketsEmitter, SubscriberId } from "types/packets-emitter/packets-emitter.interface";
 import { WebSocketServer } from 'ws';
+import { WebSocketConnectionError } from "./errors/websocket-connection.error";
 
 const WEBSOCKET_PORT = 8090;
 const WEBSOCKET_HOST = 'localhost';
 
 const WEBSOCKET_CONNECTION_EVENT = 'connection';
 const WEBSOCKET_MESSAGE_EVENT = 'message';
-const WEBSOCKET_CLOSE_EVENT = 'close';
 const WEBSOCKET_ERROR_EVENT = 'error';
 
 export class Transport {
@@ -18,10 +18,19 @@ export class Transport {
 
     constructor(packetsEmitter: IPacketsEmitter<DecodedPacket>) {
         this._packetsEmitter = packetsEmitter;
-        this._websocket = new WebSocketServer({
-            port: WEBSOCKET_PORT,
-            host: WEBSOCKET_HOST
-        });
+        try {
+            this._websocket = new WebSocketServer({
+                port: WEBSOCKET_PORT,
+                host: WEBSOCKET_HOST
+            });
+        } catch (error) {
+            throw new WebSocketConnectionError(
+                `Failed to create WebSocket server on ${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`,
+                error as Error,
+                WEBSOCKET_PORT,
+                WEBSOCKET_HOST
+            );
+        }
     }
 
     /**
@@ -35,6 +44,15 @@ export class Transport {
         this._websocket.on(WEBSOCKET_CONNECTION_EVENT, (ws) => {
             logger.info('WebSocket connected');
             // TODO: Send the ADJ structure serialized to the client
+        });
+
+        this._websocket.on(WEBSOCKET_ERROR_EVENT, (error) => {
+            logger.error(new WebSocketConnectionError(
+                'WebSocket server error',
+                error as Error,
+                WEBSOCKET_PORT,
+                WEBSOCKET_HOST
+            ));
         });
     }
 
