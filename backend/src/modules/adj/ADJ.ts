@@ -1,4 +1,4 @@
-import { err, Result } from "neverthrow";
+import { err, ok, Result } from "neverthrow";
 import { Board, BoardId, Measurement, MeasurementId, Packet, PacketId } from "types/adj";
 import { PacketError } from "./errors/packet.error";
 
@@ -44,7 +44,7 @@ export class ADJ {
             measurements.push(measurement);
         }
         
-        return measurements;
+        return ok(measurements);
     }
 
     get boards(): Map<BoardId, Board> {
