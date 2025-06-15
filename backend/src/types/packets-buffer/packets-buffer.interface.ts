@@ -1,8 +1,16 @@
+import { Observable } from "rxjs";
+
 export interface IPacketsBuffer {
     /**
      * The internal buffer to store the packets to be sended to the subscribers
      */
-    buffer: Buffer;
+    _buffer: Buffer;
+
+    /**
+     * The observable to subscribe to the buffer
+     */
+    // TODO: Change the type to Buffer
+    _observable: Observable<any>;
 
     /**
      * Write a packet to the buffer

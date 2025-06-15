@@ -1,0 +1,4 @@
+export enum PacketErrorType {
+    PACKET_ERROR = 'PACKET_ERROR',
+    PACKET_DECODE_ERROR = 'PACKET_DECODE_ERROR',
+}

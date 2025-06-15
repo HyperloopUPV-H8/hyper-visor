@@ -2,7 +2,7 @@ import { ADJ } from './';
 import { promises as fs } from 'fs';
 import { err, ok, Result } from 'neverthrow';
 import * as path from 'path';
-import { ADJLectureError } from './errors/adj-lecture';
+import { ADJLectureError } from './errors/adj-lecture.error';
 import { Board, BoardName, Measurement, Packet } from 'types/adj';
 import { ADJError } from './errors/base';
 

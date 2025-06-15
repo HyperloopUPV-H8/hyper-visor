@@ -1,3 +1,3 @@
 export * from "./sniffer";
 export * from "./network-decoder";
-export * from "./packet-decoder";
+export * from "../packet/packet-decoder";

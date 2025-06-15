@@ -1,4 +1,6 @@
+import { err, Result } from "neverthrow";
 import { Board, BoardId, Measurement, MeasurementId, Packet, PacketId } from "types/adj";
+import { PacketError } from "./errors/packet.error";
 
 export class ADJ {
     private _boards: Map<BoardId, Board>;
@@ -23,11 +25,11 @@ export class ADJ {
         this._measurements.set(measurement.id, measurement);
     }
     
-    getPacketMeasurements(packetId: PacketId): Measurement[] {
+    getPacketMeasurements(packetId: PacketId): Result<Measurement[], PacketError> {
         const packet = this._packets.get(packetId);
 
         if (!packet) {
-            return [];
+            return err(new PacketError(packetId, new Error(`Packet with id ${packetId} not found`)));
         }
         
         const measurementsIds = packet.variables;
