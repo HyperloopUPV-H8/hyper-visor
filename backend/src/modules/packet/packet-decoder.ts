@@ -4,15 +4,16 @@ import { PacketError } from "./errors/base";
 import { DecodedPacket } from "types/packet/decoded-packet.interface";
 import { MeasurementType } from "types/adj";
 import { PacketDecodeError } from "./errors/packet-decode.error";
+import { IPacketDecoder } from "types/packet/packet-decoder.interface";
 
-export class PacketDecoder {
+export class PacketDecoder implements IPacketDecoder {
     private _adj: ADJ;
 
     constructor(adj: ADJ) {
         this._adj = adj;
     }
 
-    decode(packet: Buffer): Result<DecodedPacket, PacketError> {
+    decode(packet: Buffer): Result<DecodedPacket, PacketDecodeError> {
         let offset = 0;
         const decodedPacket: DecodedPacket = {
             boardId: 0, 
