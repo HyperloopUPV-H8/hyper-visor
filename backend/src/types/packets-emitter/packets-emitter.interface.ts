@@ -28,5 +28,5 @@ export interface IPacketsEmitter<T> {
     //  * Subscribe to the buffer to receive packets
     //  * @param callback - The callback to be called when a packet is written to the buffer
     //  */
-    subscribe(callback: (packet: T) => void): Subscription;
+    subscribe(callback: (packet: T) => void): SubscriberId;
 }

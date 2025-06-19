@@ -2,6 +2,7 @@ import { logger } from "modules/logger";
 import { Observer, Subject, Subscription } from "rxjs";
 import { DecodedPacket } from "types/packet/decoded-packet.interface";
 import { IPacketsEmitter, SubscriberId } from "types/packets-emitter/packets-emitter.interface";
+import { v4 as uuidv4 } from 'uuid';
 
 
 /**
@@ -32,7 +33,9 @@ export class PacketsEmitter implements IPacketsEmitter<DecodedPacket> {
      * Subscribe to the packets emitter
      * @returns The subscriber id
      */
-    public subscribe(callback: (packet: DecodedPacket) => void): Subscription {
-        return this._subject$.subscribe(callback);
+    public subscribe(callback: (packet: DecodedPacket) => void): SubscriberId {
+        const subscriberId = uuidv4();
+        this._subscribers.set(subscriberId, this._subject$.subscribe(callback));
+        return subscriberId;
     }
 }
