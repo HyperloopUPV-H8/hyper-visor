@@ -1,0 +1,26 @@
+.gaugeContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gaugeBackground {
+    fill: #f5f5f5;
+}
+
+.backgroundPath {
+    stroke: #e0e0e0;
+}
+
+.valuePath {
+    transition: stroke-dashoffset 0.3s ease;
+}
+
+.gaugeText {
+    fill: #000;
+    font-size: 16px;
+    font-weight: bold;
+    dominant-baseline: middle;
+    text-anchor: middle;
+}
