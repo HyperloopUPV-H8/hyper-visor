@@ -1,14 +1,15 @@
-import { Gauge } from './components'
+import { Header } from './layout'
 
 function App() {
 
   return (
     <>
-      <div style={{
-        width: '25%'
-      }}>
-        <Gauge value={75} max={100} />
-      </div>
+      <Header />
+
+      <hr style={{
+        width: '80%',
+        margin: '0 auto'
+      }}/>
     </>
   )
 }
