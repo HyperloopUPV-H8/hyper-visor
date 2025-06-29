@@ -1,49 +1,77 @@
 import { WebSocketServer } from "ws";
 import { logger } from "../logger"
-import { Subscription } from "rxjs";
-import { IPacketsEmitter } from "types/packets-emitter/packets-emitter.interface";
+import { DecodedPacket } from "../../types/packet/decoded-packet.interface";
+import { IPacketsEmitter, SubscriberId } from "../../types/packets-emitter/packets-emitter.interface";
+import { WebSocketConnectionError } from "../../types/transport/errors/websocket-connection.error";
+import { ADJ } from "modules/adj";
 
-const PORT = 8003;
+// TODO: Move this to env vars
+const WEBSOCKET_PORT = 8090;
+const WEBSOCKET_HOST = '0.0.0.0';
 
-export class Transport<T> {
-    private _server: WebSocketServer;
-    private _emitter: IPacketsEmitter<T>;
-    private _subscription!: Subscription;
+const WEBSOCKET_CONNECTION_EVENT = 'connection';
+const WEBSOCKET_MESSAGE_EVENT = 'message';
+const WEBSOCKET_ERROR_EVENT = 'error';
 
-    constructor(emitter: IPacketsEmitter<T>) {
-        this._server = new WebSocketServer({ port: PORT });
-        this._emitter = emitter;
-        this.setupClientHandler();
-        this.subscribeToDataEmitter();
+export class Transport {
+    private _packetsEmitter: IPacketsEmitter<DecodedPacket>;
+    private _packetsEmitterSubscriptionId!: SubscriberId;
+    private _websocket: WebSocketServer;
+    private _adj: ADJ;
+
+    constructor(packetsEmitter: IPacketsEmitter<DecodedPacket>, adj: ADJ) {
+        this._packetsEmitter = packetsEmitter;
+        this._adj = adj;
+        try {
+            this._websocket = new WebSocketServer({
+                port: WEBSOCKET_PORT,
+                host: WEBSOCKET_HOST
+            });
+        } catch (error) {
+            throw new WebSocketConnectionError(
+                `Failed to create WebSocket server on ${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`,
+                error as Error,
+                WEBSOCKET_PORT,
+                WEBSOCKET_HOST
+            );
+        }
     }
 
-    private setupClientHandler() {
-        logger.info('[Transport] Setting up client handler');
-        this._server.on('connection', (socket) => {
-            logger.info('New client connected');
-            socket.on('message', (msg) => {
-                logger.info('Client message:', msg);
+    /**
+     * Start the websocket server
+     */
+    start(): void {
+        logger.info(`[Transport] Starting WebSocket server on: ${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`);
+
+        this._websocket.on(WEBSOCKET_CONNECTION_EVENT, (ws) => {
+            logger.info(`[Transport] WebSocket connected: ${ws.url}`);
+            ws.send(this._adj.serialize());
+        });
+
+        this._packetsEmitterSubscriptionId = this._packetsEmitter.subscribe((packet) => {
+            this._websocket.clients.forEach((client) => {
+                if (client.readyState === WebSocket.OPEN) {
+                    client.send(JSON.stringify(packet));
+                }
             });
         });
-    }
 
-    private subscribeToDataEmitter() {
-        logger.info('[Transport] Subscribing to data emitter');
-        this._subscription = this._emitter.subscribe((data) => {
-            this.broadcast(data);
+        this._websocket.on(WEBSOCKET_ERROR_EVENT, (error) => {
+            logger.error(new WebSocketConnectionError(
+                '[Transport] WebSocket server error',
+                error as Error,
+                WEBSOCKET_PORT,
+                WEBSOCKET_HOST
+            ));
         });
     }
 
-    private broadcast(data: any) {
-        this._server.clients.forEach((client) => {
-            if (client.readyState === client.OPEN) {
-                client.send(JSON.stringify(data));
-            }
-        });
-    }
-
-    close() {
-        this._subscription.unsubscribe();
-        this._server.close();
+    /**
+     * Stop the websocket server
+     */
+    stop(): void {
+        logger.info(`Stopping WebSocket server on: ${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`);
+        this._packetsEmitter.unsubscribe(this._packetsEmitterSubscriptionId);
+        this._websocket.close();
     }
 }

@@ -3,7 +3,9 @@ import { DecodedPacket } from "types/packet/decoded-packet.interface";
 import { IPacketsEmitter, SubscriberId } from "types/packets-emitter/packets-emitter.interface";
 import { WebSocketServer } from 'ws';
 import { WebSocketConnectionError } from "./errors/websocket-connection.error";
+import { ADJ } from "modules/adj";
 
+// TODO: Move this to env vars
 const WEBSOCKET_PORT = 8090;
 const WEBSOCKET_HOST = 'localhost';
 
@@ -15,9 +17,11 @@ export class Transport {
     private _packetsEmitter: IPacketsEmitter<DecodedPacket>;
     private _packetsEmitterSubscriptionId!: SubscriberId;
     private _websocket: WebSocketServer;
+    private _adj: ADJ;
 
-    constructor(packetsEmitter: IPacketsEmitter<DecodedPacket>) {
+    constructor(packetsEmitter: IPacketsEmitter<DecodedPacket>, adj: ADJ) {
         this._packetsEmitter = packetsEmitter;
+        this._adj = adj;
         try {
             this._websocket = new WebSocketServer({
                 port: WEBSOCKET_PORT,
@@ -45,7 +49,7 @@ export class Transport {
 
         this._websocket.on(WEBSOCKET_CONNECTION_EVENT, (ws) => {
             logger.info(`WebSocket connected: ${ws.url}`);
-            // TODO: Send the ADJ structure serialized to the client
+            ws.send(this._adj.serialize());
         });
 
         this._websocket.on(WEBSOCKET_ERROR_EVENT, (error) => {
@@ -63,8 +67,7 @@ export class Transport {
      */
     stop(): void {
         logger.info(`Stopping WebSocket server on: ${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`);
-
-        this._packetsEmitter.unsubscribe(this._packetsEmitterSubscriptionId);
+        // this._packetsEmitter.unsubscribe(this._packetsEmitterSubscriptionId);
         this._websocket.close();
     }
 }

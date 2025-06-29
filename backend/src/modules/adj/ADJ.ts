@@ -47,6 +47,16 @@ export class ADJ {
         return ok(measurements);
     }
 
+    serialize(): string {
+        const adj = {
+            boards: Array.from(this._boards.values()),
+            packets: Array.from(this._packets.values()),
+            measurements: Array.from(this._measurements.values()),
+        }
+
+        return JSON.stringify(adj);
+    }
+
     get boards(): Map<BoardId, Board> {
         return this._boards;
     }

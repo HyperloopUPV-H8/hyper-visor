@@ -32,7 +32,10 @@ const PCAP_FILTER = "udp and dst port 8002";
     const packetsEmitter = new PacketsEmitter();
 
     logger.info('[Index] Initializing the transport');
-    const transport = new Transport(packetsEmitter);
+    const transport = new Transport(packetsEmitter, adj.value);
+
+    logger.info('[Index] Starting the transport');
+    transport.start();
 
     sniffer.onPacket((packet) => {
         networkdecoder.decode(packet);

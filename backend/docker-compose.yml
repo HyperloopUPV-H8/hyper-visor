@@ -11,4 +11,5 @@ services:
     ports:
       - "3000:3000"
       - "8001:8002/udp"
+      - "8090:8090"
     command: npm run dev
