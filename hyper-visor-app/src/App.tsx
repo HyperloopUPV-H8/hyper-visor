@@ -1,6 +1,9 @@
+import { useHyperloopSocketManager } from './hooks/useHyperloopSocketManager';
 import { Header } from './layout'
 
 function App() {
+
+  const { readyState } = useHyperloopSocketManager();
 
   return (
     <>
