@@ -2,13 +2,19 @@ import { create } from "zustand";
 import type { Board, BoardId, Measurement, MeasurementId, Packet, PacketId } from "../types/adj";
 import type { MeasurementValue, PacketUpdate } from "../types/adj/api/packet-update.interface";
 
+export interface InitADJPacket {
+    boards: Map<BoardId, Board>;
+    packets: Map<PacketId, Packet>;
+    measurements: Map<MeasurementId, Measurement>;
+}
+
 interface Store {
     boards: Map<BoardId, Board>;
     packets: Map<PacketId, Packet>;
     measurements: Map<MeasurementId, Measurement>;
     metricsUpdates: Map<MeasurementId, MeasurementValue>;
     updateMetricsFromPacketUpdate: (packetUpdate: PacketUpdate) => void;
-    initADJ: (adj: Store) => void;
+    initADJFromPacket: (packet: InitADJPacket) => void;
 }
 
 const useADJStore = create<Store>((set, get) => ({
@@ -17,12 +23,18 @@ const useADJStore = create<Store>((set, get) => ({
     measurements: new Map(),
     metricsUpdates: new Map(),
 
-    initADJ: (adj: Store) => {
+    initADJFromPacket: (packet: InitADJPacket) => {
+        const newMeasurements = new Map();
+
+        packet.measurements.forEach((measurement) => {
+            newMeasurements.set(measurement.id, measurement);
+        });
+
         set({
             ...get(),
-            boards: adj.boards,
-            packets: adj.packets,
-            measurements: adj.measurements
+            boards: packet.boards,
+            packets: packet.packets,
+            measurements: newMeasurements
         });
     },
 
