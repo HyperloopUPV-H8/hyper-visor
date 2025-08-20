@@ -6,6 +6,15 @@ export interface Measurement {
     displayUnits: MeasurementDisplayUnits;
 }
 
+export interface NumericMeasurement extends Measurement {
+    safeRange: [number, number];
+    warningRange: [number, number];
+}
+
+export interface EnumMeasurement extends Measurement {
+    enumValues: string[];
+}
+
 export type MeasurementId = string;
 export type MeasurementName = string;
 export type MeasurementType =
