@@ -29,14 +29,14 @@ export class PacketDecoder implements IPacketDecoder {
         const packetMeasurements = this._adj.getPacketMeasurements(packetId);
 
         if (packetMeasurements.isErr()) {
-            return err(new PacketError(`Error decoding packet ${packetId}`, packetId, packetMeasurements.error));
+            return err(new PacketError(`Error decoding packet ${packetId}: ${packetMeasurements.error.message}`, packetId, packetMeasurements.error));
         }
 
         for (const measurement of packetMeasurements.value) {
             const decodeMeasurementValueResult = this.decodeMeasurementValue(packet, offset, measurement.type);
 
             if (decodeMeasurementValueResult.isErr()) {
-                return err(new PacketError(`Error decoding packet ${packetId}`, packetId, decodeMeasurementValueResult.error));
+                return err(new PacketError(`Error decoding packet ${packetId}: ${decodeMeasurementValueResult.error.message}`, packetId, decodeMeasurementValueResult.error));
             }
 
             const { value, newOffset } = decodeMeasurementValueResult.value;

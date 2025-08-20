@@ -5,7 +5,7 @@ import { PacketsEmitter } from "./modules/packets-emitter";
 import { Transport } from "./modules/transport/transport";
 
 const PCAP_INTERFACE = "eth0";
-const PCAP_FILTER = "udp and dst port 8002";
+const PCAP_FILTER = "udp and dst port 8001";
 
 (async () => {
     logger.info('[Index] Starting the sniffer');
@@ -40,6 +40,11 @@ const PCAP_FILTER = "udp and dst port 8002";
     sniffer.onPacket((packet) => {
         networkdecoder.decode(packet);
         const decodedPacket = packetDecoder.decode(networkdecoder.payload!);
+
+        if (decodedPacket.isErr()) {
+            logger.error(decodedPacket.error.message);
+            return;
+        }
 
         if (decodedPacket.isOk()) {
             packetsEmitter.emit(decodedPacket.value);
