@@ -1,13 +1,16 @@
 import { useRef } from "react";
 import useWebSocket from "react-use-websocket";
+import type { ReadyState } from "react-use-websocket";
 
-interface Props {
+interface Props<TFirst, TUpdate> {
     url: string;
-    onFirstMessage: (data: unknown) => void;
-    onUpdateMessage: (data: unknown) => void;
+    onFirstMessage: (data: TFirst) => void;
+    onUpdateMessage: (data: TUpdate) => void;
 }
 
-export function useHyperloopSocket({ url, onFirstMessage, onUpdateMessage }: Props): { readyState: ReadyState } {
+export function useHyperloopSocket<TFirst = unknown, TUpdate = unknown>(
+    { url, onFirstMessage, onUpdateMessage }: Props<TFirst, TUpdate>
+): { readyState: ReadyState } {
     const firstMsgRef = useRef(true);
 
     const { readyState } = useWebSocket(url, {

@@ -1,14 +1,13 @@
 import { create } from "zustand";
 import type { Board, BoardId, Measurement, MeasurementId, Packet, PacketId } from "../types/adj";
-
-type MetricValue = number | string | boolean;
+import type { MeasurementValue, PacketUpdate } from "../types/adj/api/packet-update.interface";
 
 interface Store {
     boards: Map<BoardId, Board>;
     packets: Map<PacketId, Packet>;
     measurements: Map<MeasurementId, Measurement>;
-    metricsUpdates: Map<MeasurementId, MetricValue>;
-    updateMetric: (measurementId: MeasurementId, value: MetricValue) => void;
+    metricsUpdates: Map<MeasurementId, MeasurementValue>;
+    updateMetricsFromPacketUpdate: (packetUpdate: PacketUpdate) => void;
     initADJ: (adj: Store) => void;
 }
 
@@ -27,10 +26,12 @@ const useADJStore = create<Store>((set, get) => ({
         });
     },
 
-    updateMetric: (measurementId: MeasurementId, value: MetricValue) => {
+    updateMetricsFromPacketUpdate: (packetUpdate: PacketUpdate) => {
         set((state) => {
             const newMetricsUpdates = new Map(state.metricsUpdates);
-            newMetricsUpdates.set(measurementId, value);
+            packetUpdate.measurements.forEach((measurement) => {
+                newMetricsUpdates.set(measurement.measurementId, measurement.value);
+            });
             return {
                 ...state,
                 metricsUpdates: newMetricsUpdates
