@@ -2,6 +2,7 @@ import { Gauge } from './components';
 import { VehiclePosition } from './components/VehiclePosition/VehiclePosition';
 import { useHyperloopSocketManager } from './hooks/useHyperloopSocketManager';
 import { Header } from './layout'
+import styles from './App.module.scss'
 
 function App() {
 
@@ -16,8 +17,10 @@ function App() {
         margin: '0 auto'
       }}/>
 
+      <h2 className={styles.sectionTitle}>Position & Movement</h2>
+
       <div style={{
-        padding: '40px 20px',
+        padding: '40px',
         display: 'flex',
         justifyContent: 'space-between',
       }}>
@@ -37,7 +40,7 @@ function App() {
             min={0}
             max={100}
             unit="Km/h"
-            size={180}
+            size={170}
             strokeWidth={18}
           />
           <Gauge
@@ -46,11 +49,15 @@ function App() {
             min={0}
             max={100}
             unit="G"
-            size={180}
+            size={170}
             strokeWidth={18}
           />
         </div>
       </div>
+
+      <h2 className={styles.sectionTitle}>Brakes</h2>
+
+      <h2 className={styles.sectionTitle}>Levitation</h2>
     </>
   )
 }

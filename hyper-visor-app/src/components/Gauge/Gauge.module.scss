@@ -2,6 +2,7 @@
 
 .gauge {
     display: inline-block;
+    margin: 0 auto;
     border-radius: 9999px;
 }
 
@@ -28,7 +29,7 @@ font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
 }
 
 .label {
-font-size: 12px;
+font-size: 14px;
 font-weight: 500;
 fill: vars.$blue-base; /* texto secundario */
 opacity: 0.9;

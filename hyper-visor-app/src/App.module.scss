@@ -1,0 +1,9 @@
+@use './styles/variables' as vars;
+
+.sectionTitle {
+    font-size: 24px;
+    font-weight: 600;
+    color: vars.$blue-dark;
+    text-align: center;
+    margin-top: 20px
+}

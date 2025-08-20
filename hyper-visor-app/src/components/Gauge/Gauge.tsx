@@ -1,14 +1,13 @@
 import React from "react";
 import styles from "./Gauge.module.scss";
+import type { MeasurementId, NumericMeasurement } from "../../types/adj";
+import { useMeasurementUpdate } from "../../hooks/useMeasurementUpdate";
+import useADJStore from "../../store/store";
 
 type GaugeProps = {
-  value: number;
-  min?: number;
-  max?: number;
-  label?: string;
-  unit?: string;
-  size?: number;
-  strokeWidth?: number;
+    measurementId: MeasurementId;
+    size?: number;
+    strokeWidth?: number;
 };
 
 const clamp = (n: number, a: number, b: number) => Math.max(a, Math.min(n, b));
@@ -27,16 +26,20 @@ function pointOnCircle(cx: number, cy: number, r: number, a: number) {
 }
 
 export const Gauge: React.FC<GaugeProps> = ({
-    value,
-    min = 0,
-    max = 100,
-    label = "Speed",
-    unit = "Km/h",
+    measurementId,
     size = 300,
     strokeWidth = 28,
 }) => {
-    const v = clamp(value, min, max);
-    const t = (v - min) / Math.max(max - min, 1);
+    
+    const value = useMeasurementUpdate(measurementId) as number;
+    const measurementInfo = useADJStore((state) => state.measurements.get(measurementId));
+    
+    if (!measurementInfo) return null;
+    
+    const { name, displayUnits, safeRange } = measurementInfo as NumericMeasurement;
+    
+    const v = clamp(value || 0, safeRange[0], safeRange[1]);
+    const t = (v - safeRange[0]) / Math.max(safeRange[1] - safeRange[0], 1);
 
     // Arco 270° con gap abajo-derecha
     const START = 135;
@@ -65,7 +68,7 @@ export const Gauge: React.FC<GaugeProps> = ({
 
     return (
         <div className={styles.gauge} style={{ width: size, height: size }}>
-        <svg className={styles.svg} width={w} height={h} viewBox={`0 0 ${w} ${h}`}>
+        <svg className={styles.svg} width={160} height={180} viewBox={`0 0 ${w} ${h}`}>
             <defs>
             {cuts.map((angle, i) => {
                 const a0 = angle - BLEND_DEG / 2;
@@ -137,14 +140,14 @@ export const Gauge: React.FC<GaugeProps> = ({
             {/* Interior + textos */}
             <circle cx={cx} cy={cy} r={r - strokeWidth * 2.1} className={styles.inner} />
             <g className={styles.labels} transform={`translate(${cx}, ${cy - 10})`}>
-                <text className={styles.label} textAnchor="middle" y={-10}>
-                    {label}
+                <text className={styles.label} textAnchor="middle" y={-5}>
+                    {name}
                 </text>
                 <text className={styles.valueText} textAnchor="middle" y={30}>
                     {Math.round(v)}
                 </text>
                 <text className={styles.unit} textAnchor="middle" y={60}>
-                    {unit}
+                    {displayUnits}
                 </text>
             </g>
         </svg>
