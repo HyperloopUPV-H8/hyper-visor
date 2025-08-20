@@ -20,7 +20,7 @@ export const VehiclePosition = ({ position, totalDistanceTrack }: Props) => {
                         top: `${100 - positionPercentage}%`
                     }}
                 />
-                
+                <div>
                 {totalMeters.map((meter) => (
                     <div 
                         key={meter}
@@ -30,6 +30,7 @@ export const VehiclePosition = ({ position, totalDistanceTrack }: Props) => {
                         <span className={styles.markerText}>{meter}m</span>
                     </div>
                 ))}
+                </div>
             </div>
         </div>
     );

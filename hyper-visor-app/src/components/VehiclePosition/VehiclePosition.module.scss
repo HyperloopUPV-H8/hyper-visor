@@ -4,7 +4,7 @@
 
 .track {
     position: relative;
-    width: 167px;
+    width: 100px;
     height: 350px;
     background-image: url('../../assets/track.svg');
     background-size: contain;
@@ -47,7 +47,7 @@
 
 .distanceMarker {
     position: absolute;
-    right: -5px;
+    right: -30px;
     transform: translateY(-50%);
     
     .markerText {
