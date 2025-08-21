@@ -63,7 +63,6 @@ export class Transport implements ITransport {
         this._packetsEmitterSubscriptionId = this._packetsEmitter.subscribe((packet) => {
             this._websocket.clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
-                    logger.info('sending packet', packet.packetId);
                     client.send(JSON.stringify(packet));
                 }
             });
