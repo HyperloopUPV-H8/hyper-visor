@@ -40,13 +40,11 @@ const PCAP_FILTER = "udp and dst port 8001";
     transport.start();
 
     sniffer.onPacket((packet) => {
-        console.log('packet', packet);
         networkdecoder.decode(packet);
         const decodedPacket = packetDecoder.decode(networkdecoder.payload!);
 
         if (decodedPacket.isErr()) {
             logger.error(decodedPacket.error.message);
-            return;
         }
 
         if (decodedPacket.isOk()) {

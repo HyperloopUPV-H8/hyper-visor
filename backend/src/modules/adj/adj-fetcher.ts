@@ -1,6 +1,7 @@
 import * as https from 'https';
 import * as fs from 'fs';
 import * as path from 'path';
+import { logger } from '../logger';
 
 const owner = 'HyperloopUPV-H8';
 const repo = 'adj';
@@ -69,7 +70,7 @@ async function processPath(apiPath: string, localPath: string): Promise<void> {
     for (const item of items) {
         const itemPath = path.join(localPath, item.name);
         if (item.type === 'file') {
-            console.log(`Descargando archivo: ${item.path}`);
+            logger.info(`Descargando archivo: ${item.path}`);
             await downloadFile(item.download_url, itemPath);
         } else if (item.type === 'dir') {
             await processPath(item.path, itemPath); // Recursividad
@@ -78,7 +79,7 @@ async function processPath(apiPath: string, localPath: string): Promise<void> {
 }
 
 export async function main() {
-    console.log(`📥 Descargando repo "${owner}/${repo}"...`);
+    logger.info(`📥 Descargando repo "${owner}/${repo}"...`);
     await processPath('', outputDir);
-    console.log('✅ Descarga completa.');
+    logger.info('✅ Descarga completa.');
 }

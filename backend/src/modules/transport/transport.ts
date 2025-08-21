@@ -30,6 +30,14 @@ export class Transport implements ITransport {
                 port: WEBSOCKET_PORT,
                 host: WEBSOCKET_HOST
             });
+            this._websocket.on(WEBSOCKET_ERROR_EVENT, (error) => {
+                logger.error(new WebSocketConnectionError(
+                    '[Transport] WebSocket server error',
+                    error as Error,
+                    WEBSOCKET_PORT,
+                    WEBSOCKET_HOST
+                ));
+            });
         } catch (error) {
             throw new WebSocketConnectionError(
                 `Failed to create WebSocket server on ${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`,
@@ -55,19 +63,12 @@ export class Transport implements ITransport {
         this._packetsEmitterSubscriptionId = this._packetsEmitter.subscribe((packet) => {
             this._websocket.clients.forEach((client) => {
                 if (client.readyState === WebSocket.OPEN) {
+                    logger.info('sending packet', packet.packetId);
                     client.send(JSON.stringify(packet));
                 }
             });
         });
 
-        this._websocket.on(WEBSOCKET_ERROR_EVENT, (error) => {
-            logger.error(new WebSocketConnectionError(
-                '[Transport] WebSocket server error',
-                error as Error,
-                WEBSOCKET_PORT,
-                WEBSOCKET_HOST
-            ));
-        });
     }
 
     /**
