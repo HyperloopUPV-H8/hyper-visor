@@ -3,6 +3,7 @@ import { VehiclePosition } from './components/VehiclePosition/VehiclePosition';
 import { useHyperloopSocketManager } from './hooks/useHyperloopSocketManager';
 import { Header } from './layout'
 import styles from './App.module.scss'
+import { Brake } from './components/Brake/Brake';
 
 function App() {
 
@@ -35,20 +36,12 @@ function App() {
           flexDirection: 'column',
         }}>
           <Gauge
-            label="Speed"
-            value={80}
-            min={0}
-            max={100}
-            unit="Km/h"
+            measurementId="reference_speed"
             size={170}
             strokeWidth={18}
           />
           <Gauge
-            label="Acceleration"
-            value={80}
-            min={0}
-            max={100}
-            unit="G"
+            measurementId="reference_speed"
             size={170}
             strokeWidth={18}
           />
@@ -56,7 +49,29 @@ function App() {
       </div>
 
       <h2 className={styles.sectionTitle}>Brakes</h2>
-
+      <div className={styles.brakesContainer}>
+        <div className={styles.brakesColumn}>
+          <Brake
+            measurementId="reed_1"
+            rotation={0}
+          />
+          <Brake
+            measurementId="reed_2"
+            rotation={0}
+          />
+        </div>
+        <div className={styles.brakesColumn}>
+          <Brake
+            measurementId="reed_3"
+            rotation={180}
+          />
+          <Brake
+            measurementId="reed_4"
+            rotation={180}
+          />
+        </div>
+      </div>
+      
       <h2 className={styles.sectionTitle}>Levitation</h2>
     </>
   )

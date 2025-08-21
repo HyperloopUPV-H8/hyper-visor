@@ -5,5 +5,18 @@
     font-weight: 600;
     color: vars.$blue-dark;
     text-align: center;
-    margin-top: 20px
+    margin: 20px 0;
+}
+
+.brakesContainer {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 0 60px;
+}
+
+.brakesColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }

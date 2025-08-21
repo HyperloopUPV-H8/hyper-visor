@@ -18,6 +18,18 @@ body {
     font-family: vars.$font-family;
 }
 
-img {
-    max-width: 100%;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
