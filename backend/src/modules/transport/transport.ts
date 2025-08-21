@@ -1,9 +1,10 @@
-import { WebSocketServer } from "ws";
+import { WebSocketServer, WebSocket } from "ws";
 import { logger } from "../logger"
 import { DecodedPacket } from "../../types/packet/decoded-packet.interface";
 import { IPacketsEmitter, SubscriberId } from "../../types/packets-emitter/packets-emitter.interface";
 import { WebSocketConnectionError } from "../../types/transport/errors/websocket-connection.error";
 import { ADJ } from "modules/adj";
+import { ITransport } from "types/transport";
 
 // TODO: Move this to env vars
 const WEBSOCKET_PORT = 8090;
@@ -13,15 +14,17 @@ const WEBSOCKET_CONNECTION_EVENT = 'connection';
 const WEBSOCKET_MESSAGE_EVENT = 'message';
 const WEBSOCKET_ERROR_EVENT = 'error';
 
-export class Transport {
+export class Transport implements ITransport {
     private _packetsEmitter: IPacketsEmitter<DecodedPacket>;
     private _packetsEmitterSubscriptionId!: SubscriberId;
     private _websocket: WebSocketServer;
+    private _clients: Set<WebSocket>;
     private _adj: ADJ;
 
     constructor(packetsEmitter: IPacketsEmitter<DecodedPacket>, adj: ADJ) {
         this._packetsEmitter = packetsEmitter;
         this._adj = adj;
+        this._clients = new Set();
         try {
             this._websocket = new WebSocketServer({
                 port: WEBSOCKET_PORT,
@@ -46,6 +49,7 @@ export class Transport {
         this._websocket.on(WEBSOCKET_CONNECTION_EVENT, (ws) => {
             logger.info(`[Transport] WebSocket connected: ${ws.url}`);
             ws.send(this._adj.serialize());
+            this._clients.add(ws);
         });
 
         this._packetsEmitterSubscriptionId = this._packetsEmitter.subscribe((packet) => {

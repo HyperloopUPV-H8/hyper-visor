@@ -3,7 +3,7 @@ import { promises as fs } from 'fs';
 import { err, ok, Result } from 'neverthrow';
 import * as path from 'path';
 import { ADJLectureError } from './errors/adj-lecture.error';
-import { Board, BoardName, Measurement, Packet } from 'types/adj';
+import { Board, BoardName, EnumMeasurement, Measurement, NumericMeasurement, Packet } from 'types/adj';
 import { ADJError } from './errors/base';
 
 const FILES_REGEX = {
@@ -166,11 +166,37 @@ export class ADJConstructor {
                     podUnits: measurement.podUnits,
                     displayUnits: measurement.displayUnits,
                 }
+
+                if(this.measurementIsNumeric(newMeasurement)) {
+                    (newMeasurement as NumericMeasurement).safeRange = measurement.safeRange;
+                    (newMeasurement as NumericMeasurement).warningRange = measurement.warningRange;
+                }
+
+                if(this.measurementIsEnum(newMeasurement)) {
+                    (newMeasurement as EnumMeasurement).enumValues = measurement.enumValues;
+                }
+
                 measurements.push(newMeasurement);
             }
             return ok(measurements);
         } catch (error) {
             return err(new ADJLectureError(`Error while reading measurements file: ${error}`, error as Error, measurementsFilePath));
         }
+    }
+
+    private measurementIsNumeric(measurement: Measurement): boolean {
+        return ['uint8', 'uint16', 'uint32', 'uint64', 'int8', 'int16', 'int32', 'int64', 'float32', 'float64'].includes(measurement.type);
+    }
+
+    private measurementIsString(measurement: Measurement): boolean {
+        return measurement.type === 'string';
+    }
+
+    private measurementIsBoolean(measurement: Measurement): boolean {
+        return measurement.type === 'bool';
+    }
+    
+    private measurementIsEnum(measurement: Measurement): boolean {
+        return measurement.type === 'enum';
     }
 }

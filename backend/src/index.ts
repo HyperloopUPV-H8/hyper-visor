@@ -1,5 +1,5 @@
 import { Sniffer, NetworkDecoder, PacketDecoder } from "./modules/sniffer";
-import { ADJConstructor } from "./modules/adj";
+import { ADJConstructor, main as adjFetcher } from "./modules/adj";
 import { logger } from "./modules/logger";
 import { PacketsEmitter } from "./modules/packets-emitter";
 import { Transport } from "./modules/transport/transport";
@@ -11,12 +11,14 @@ const PCAP_FILTER = "udp and dst port 8001";
     logger.info('[Index] Starting the sniffer');
     const sniffer = new Sniffer(PCAP_INTERFACE, PCAP_FILTER);
 
+    // await adjFetcher();
+
     logger.info('[Index] Starting the ADJ constructor');
     const adjConstructor = new ADJConstructor('./adj');
 
     logger.info('[Index] Building the ADJ structure');
     const adj = await adjConstructor.execute();
-    
+
     if (adj.isErr()) {
         logger.error(adj.error);
         return;
@@ -38,6 +40,7 @@ const PCAP_FILTER = "udp and dst port 8001";
     transport.start();
 
     sniffer.onPacket((packet) => {
+        console.log('packet', packet);
         networkdecoder.decode(packet);
         const decodedPacket = packetDecoder.decode(networkdecoder.payload!);
 

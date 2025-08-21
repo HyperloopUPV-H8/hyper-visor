@@ -1,73 +1,13 @@
-import { logger } from "modules/logger";
-import { DecodedPacket } from "types/packet/decoded-packet.interface";
-import { IPacketsEmitter, SubscriberId } from "types/packets-emitter/packets-emitter.interface";
-import { WebSocketServer } from 'ws';
-import { WebSocketConnectionError } from "./errors/websocket-connection.error";
-import { ADJ } from "modules/adj";
-
-// TODO: Move this to env vars
-const WEBSOCKET_PORT = 8090;
-const WEBSOCKET_HOST = 'localhost';
-
-const WEBSOCKET_CONNECTION_EVENT = 'connection';
-const WEBSOCKET_MESSAGE_EVENT = 'message';
-const WEBSOCKET_ERROR_EVENT = 'error';
-
-export class Transport {
-    private _packetsEmitter: IPacketsEmitter<DecodedPacket>;
-    private _packetsEmitterSubscriptionId!: SubscriberId;
-    private _websocket: WebSocketServer;
-    private _adj: ADJ;
-
-    constructor(packetsEmitter: IPacketsEmitter<DecodedPacket>, adj: ADJ) {
-        this._packetsEmitter = packetsEmitter;
-        this._adj = adj;
-        try {
-            this._websocket = new WebSocketServer({
-                port: WEBSOCKET_PORT,
-                host: WEBSOCKET_HOST
-            });
-        } catch (error) {
-            throw new WebSocketConnectionError(
-                `Failed to create WebSocket server on ${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`,
-                error as Error,
-                WEBSOCKET_PORT,
-                WEBSOCKET_HOST
-            );
-        }
-    }
-
+export interface ITransport {
     /**
      * Start the websocket server
+     * Initializes the connection, sets up event listeners and starts emitting packets
      */
-    start(): void {
-        logger.info(`Starting WebSocket server on: ${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`);
-
-        this._packetsEmitterSubscriptionId = this._packetsEmitter.subscribe((packet) => {
-            console.log(packet);
-        });
-
-        this._websocket.on(WEBSOCKET_CONNECTION_EVENT, (ws) => {
-            logger.info(`WebSocket connected: ${ws.url}`);
-            ws.send(this._adj.serialize());
-        });
-
-        this._websocket.on(WEBSOCKET_ERROR_EVENT, (error) => {
-            logger.error(new WebSocketConnectionError(
-                'WebSocket server error',
-                error as Error,
-                WEBSOCKET_PORT,
-                WEBSOCKET_HOST
-            ));
-        });
-    }
+    start(): void;
 
     /**
      * Stop the websocket server
+     * Closes connections and cleans up resources
      */
-    stop(): void {
-        logger.info(`Stopping WebSocket server on: ${WEBSOCKET_HOST}:${WEBSOCKET_PORT}`);
-        // this._packetsEmitter.unsubscribe(this._packetsEmitterSubscriptionId);
-        this._websocket.close();
-    }
+    stop(): void;
 }
