@@ -49,6 +49,7 @@ function App() {
       </div>
 
       <h2 className={styles.sectionTitle}>Brakes</h2>
+      
       <div className={styles.brakesContainer}>
         <div className={styles.brakesColumn}>
           <Brake

@@ -17,7 +17,7 @@ export const Gauge: React.FC<GaugeProps> = ({
 }) => {
     
     const value = useMeasurementUpdate(measurementId) as number;
-    const measurementInfo = useADJStore((state) => state.measurements.get(measurementId));
+    const measurementInfo = useADJStore((state) => state.measurements[measurementId]);
     
     if (!measurementInfo) {
         const t = 0.5;

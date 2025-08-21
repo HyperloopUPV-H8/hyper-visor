@@ -3,31 +3,31 @@ import type { Board, BoardId, Measurement, MeasurementId, Packet, PacketId } fro
 import type { MeasurementValue, PacketUpdate } from "../types/adj/api/packet-update.interface";
 
 export interface InitADJPacket {
-    boards: Map<BoardId, Board>;
-    packets: Map<PacketId, Packet>;
-    measurements: Map<MeasurementId, Measurement>;
+    boards: Record<BoardId, Board>;
+    packets: Record<PacketId, Packet>;
+    measurements: Record<MeasurementId, Measurement>;
 }
 
 interface Store {
-    boards: Map<BoardId, Board>;
-    packets: Map<PacketId, Packet>;
-    measurements: Map<MeasurementId, Measurement>;
-    metricsUpdates: Map<MeasurementId, MeasurementValue>;
+    boards: Record<BoardId, Board>;
+    packets: Record<PacketId, Packet>;
+    measurements: Record<MeasurementId, Measurement>;
+    metricsUpdates: Record<MeasurementId, MeasurementValue>;
     updateMetricsFromPacketUpdate: (packetUpdate: PacketUpdate) => void;
     initADJFromPacket: (packet: InitADJPacket) => void;
 }
 
 const useADJStore = create<Store>((set, get) => ({
-    boards: new Map(),
-    packets: new Map(),
-    measurements: new Map(),
-    metricsUpdates: new Map(),
+    boards: {},
+    packets: {},
+    measurements: {},
+    metricsUpdates: {},
 
     initADJFromPacket: (packet: InitADJPacket) => {
-        const newMeasurements = new Map();
+        const newMeasurements: Record<MeasurementId, Measurement> = {};
 
-        packet.measurements.forEach((measurement) => {
-            newMeasurements.set(measurement.id, measurement);
+        Object.keys(packet.measurements).forEach((measurementId) => {
+            newMeasurements[measurementId] = packet.measurements[measurementId];
         });
 
         set({
@@ -40,9 +40,9 @@ const useADJStore = create<Store>((set, get) => ({
 
     updateMetricsFromPacketUpdate: (packetUpdate: PacketUpdate) => {
         set((state) => {
-            const newMetricsUpdates = new Map(state.metricsUpdates);
+            const newMetricsUpdates: Record<MeasurementId, MeasurementValue> = {};
             packetUpdate.measurements.forEach((measurement) => {
-                newMetricsUpdates.set(measurement.measurementId, measurement.value);
+                newMetricsUpdates[measurement.measurementId] = measurement.value;
             });
             return {
                 ...state,
